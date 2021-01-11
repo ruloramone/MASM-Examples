@@ -1,0 +1,72 @@
+			page 60,132
+	title   Programa de despliegue de un menu    pp.192
+	.model small
+	.stack 64
+	.data
+var     DB 00
+segs    DB 00,30H,30H,3AH,30H,30H,3AH,30H,30H,"$"
+ASC1    DB '5'
+ASC2    DB '08'
+ASC3    DW '37'
+ASC4    DW '86'
+ASCR1   DB ?
+ASCR2   DW ?
+col     db      00
+row     db      00
+count   db      ?
+lines   db      ?
+attrib  db      ?
+;----------------------------------------------------------------------------        
+	.code
+begin   proc    Far
+	mov     ax,@data
+	mov     DS,AX
+	mov     ES,AX
+       ;aqui inicia el programa
+inicio:
+		mov al,0000011
+		mov dx,378h
+		out dx,al
+		call salirq
+		call Retardo
+		mov al,0000000
+		mov dx,378h
+		out dx,al
+		call salirq
+		call retardo
+
+jmp inicio
+
+	
+	
+
+    ;AQUI TERMINAMI PROGRAMA
+	mov     ax,4c00h
+	int     21h
+begin   endp
+;----------------------------------------------------------------------------------------------------
+Retardo Proc Near
+SGN1:	MOV DX,0ffh     ;CONTADOR EXTERNODE xx VUELTAS
+DNVO:   MOV CX,0FFFFH  ;CONTADOR INTERNO DE 64k VUELTAS
+MAS:    DEC CX
+        call salirq
+		CMP CX,0000
+        JNE MAS
+        DEC DX
+        CMP DX,0000
+        JNE DNVO
+        RET
+Retardo Endp
+;---------------------------------------------------------------------------------------
+Salirq	Proc	Near
+	mov ah,06
+	mov dl,0ffh	;PRESIONA Q PARA SALIR
+	int 21h
+    cmp al,'Q'
+	je  final
+	ret
+Salirq	Endp
+
+	end     begin
+
+
